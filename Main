@@ -1,0 +1,101 @@
+import ephem
+import tkinter as tk
+
+class App:
+    def __init__(self, master):
+        # Set the observer location to the current system time
+        self.observer = ephem.Observer()
+        self.observer.date = ephem.now()
+
+        # Define the planets and the sun
+        self.sun = ephem.Sun(self.observer)
+        self.mercury = ephem.Mercury(self.observer)
+        self.venus = ephem.Venus(self.observer)
+        self.mars = ephem.Mars(self.observer)
+        self.jupiter = ephem.Jupiter(self.observer)
+        self.saturn = ephem.Saturn(self.observer)
+        self.uranus = ephem.Uranus(self.observer)
+        self.neptune = ephem.Neptune(self.observer)
+        self.pluto = ephem.Pluto(self.observer)
+
+        # Calculate the positions of the planets and the sun
+        self.sun.compute(self.observer)
+        self.mercury.compute(self.observer)
+        self.venus.compute(self.observer)
+        self.mars.compute(self.observer)
+        self.jupiter.compute(self.observer)
+        self.saturn.compute(self.observer)
+        self.uranus.compute(self.observer)
+        self.neptune.compute(self.observer)
+        self.pluto.compute(self.observer)
+
+        # Create the GUI elements
+        self.master = master
+        self.master.title("Planet Position Tracker")
+
+       
+
+        # Create the label and the option menu for selecting the planet
+        self.label = tk.Label(self.master, text="Select a planet:")
+        self.label.pack()
+        self.var = tk.StringVar(self.master)
+        self.var.set("Sun")  # Default choice
+        self.choices = ["Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
+        self.option_menu = tk.OptionMenu(self.master, self.var, *self.choices)
+        self.option_menu.pack()
+
+        # Create the button to get the planet position
+        self.button = tk.Button(self.master, text="Get Position", command=self.get_position)
+        self.button.pack()
+
+        # Create the output label
+        self.output_label = tk.Label(self.master, text="")
+        self.output_label.pack()
+
+    def get_position(self):
+        # Get the selected planet
+        planet_name = self.var.get()
+
+        # Set the planet object based on the selected planet name
+        if planet_name == "Sun":
+            planet = self.sun
+        elif planet_name == "Mercury":
+            planet = self.mercury
+        elif planet_name == "Venus":
+            planet = self.venus
+        elif planet_name == "Mars":
+            planet = self.mars
+        elif planet_name == "Jupiter":
+            planet = self.jupiter
+        elif planet_name == "Saturn":
+            planet = self.saturn
+        elif planet_name == "Uranus":
+            planet = self.uranus
+        elif planet_name == "Neptune":
+            planet = self.neptune
+        elif planet_name == "Pluto":
+            planet = self.pluto
+
+        # Calculate the planet
+        planet.compute(self.observer)
+
+        # Get the planet position data
+        right_ascension = planet.ra
+        declination = planet.dec
+        distance = planet.earth_distance
+        altitude = planet.alt
+        azimuth = planet.az
+
+        # Display the planet position data
+        output_text = f"Planet: {planet_name}\n"
+        output_text += f"Right Ascension: {right_ascension}\n"
+        output_text += f"Declination: {declination}\n"
+        output_text += f"Distance: {distance:.2f} AU\n"
+        output_text += f"Altitude: {altitude:.2f} degrees\n"
+        output_text += f"Azimuth: {azimuth:.2f} degrees"
+        self.output_label.config(text=output_text)
+
+# Create the GUI
+root = tk.Tk()
+app = App(root)
+root.mainloop()
